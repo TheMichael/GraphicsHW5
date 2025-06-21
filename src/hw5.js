@@ -1,8 +1,6 @@
 import {OrbitControls} from './OrbitControls.js'
 
 const scene = new THREE.Scene();
-const axesHelper = new THREE.AxesHelper(20);
-scene.add(axesHelper);
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
