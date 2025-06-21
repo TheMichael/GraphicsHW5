@@ -435,6 +435,26 @@ instructionsElement.innerHTML = `
 `;
 document.body.appendChild(instructionsElement);
 
+
+// Score display
+const scoreElement = document.createElement('div');
+scoreElement.style.position = 'absolute';
+scoreElement.style.bottom = '600px';
+scoreElement.style.left = '550px';       // adjust to sit to the right of your instructions
+scoreElement.style.color = 'white';
+scoreElement.style.fontSize = '16px';
+scoreElement.style.fontFamily = 'Arial, sans-serif';
+scoreElement.style.display = 'flex';
+scoreElement.style.gap = '40px';         // space between A and B
+
+scoreElement.innerHTML = `
+  <span id="scoreA">Score Player A:   0 points</span>
+  <span id="scoreB">Score Player B:   0 points</span>
+`;
+document.body.appendChild(scoreElement);
+
+
+
 // Handle key events
 function handleKeyDown(e) {
   if (e.key === "o") {
