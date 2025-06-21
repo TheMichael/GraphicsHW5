@@ -440,12 +440,12 @@ document.body.appendChild(instructionsElement);
 const scoreElement = document.createElement('div');
 scoreElement.style.position = 'absolute';
 scoreElement.style.bottom = '600px';
-scoreElement.style.left = '550px';       // adjust to sit to the right of your instructions
+scoreElement.style.left = '550px';
 scoreElement.style.color = 'white';
 scoreElement.style.fontSize = '16px';
 scoreElement.style.fontFamily = 'Arial, sans-serif';
 scoreElement.style.display = 'flex';
-scoreElement.style.gap = '40px';         // space between A and B
+scoreElement.style.gap = '40px';
 
 scoreElement.innerHTML = `
   <span id="scoreA">Score Player A:   0 points</span>
