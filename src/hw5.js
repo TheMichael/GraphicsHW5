@@ -28,44 +28,58 @@ function degrees_to_radians(degrees) {
 
 // Create basketball court
 function createBasketballCourt() {
-  // Court floor - just a simple brown surface
+  // Court floor - court with wood textures
   const courtGeometry = new THREE.BoxGeometry(30, 0.2, 15);
-  const courtMaterial = new THREE.MeshPhongMaterial({ 
-    color: 0xc68642,  // Brown wood color
+
+  const textureLoader = new THREE.TextureLoader();
+  const baseColorMap = textureLoader.load('src/textures/oakfloor_basecolor.png');
+  const normalMap = textureLoader.load('src/textures/oakfloor_normal.png');
+  const aoMap = textureLoader.load('src/textures/oakfloor_AO.png');
+  // Set texture repeat for proper tiling
+  baseColorMap.wrapS = baseColorMap.wrapT = THREE.RepeatWrapping;
+  normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping;
+  aoMap.wrapS = aoMap.wrapT = THREE.RepeatWrapping;
+  baseColorMap.repeat.set(8, 4); // Repeat 8x4 times
+  normalMap.repeat.set(8, 4);
+  aoMap.repeat.set(8, 4);
+  
+  const courtMaterial = new THREE.MeshPhongMaterial({
+    map: baseColorMap,
+    normalMap: normalMap,
+    aoMap: aoMap,
     shininess: 50
   });
+  
   const court = new THREE.Mesh(courtGeometry, courtMaterial);
   court.receiveShadow = true;
   scene.add(court);
 
   //this is the out of bounds area where the base of the basket will be
-  const outOfBoundsCourtPartGeometry = new THREE.BoxGeometry(36, 0.1, 18)
-  const outOfBoundsCourtPartMaterial = new THREE.MeshPhongMaterial({ color: 0xffbc4d, shininess: 50 });
+  const outOfBoundsCourtPartGeometry = new THREE.BoxGeometry(36, 0.1, 18);
+
+  // add different wood texture for the oob 
+  const mahoganyBaseColorMap = textureLoader.load('src/textures/mahogfloor_basecolor.png');
+  const mahoganyNormalMap = textureLoader.load('src/textures/mahogfloor_normal.png');
+  const mahoganyAOMap = textureLoader.load('src/textures/mahogfloor_AO.png');
+
+  // Set texture repeat for proper tiling
+  mahoganyBaseColorMap.wrapS = mahoganyBaseColorMap.wrapT = THREE.RepeatWrapping;
+  mahoganyNormalMap.wrapS = mahoganyNormalMap.wrapT = THREE.RepeatWrapping;
+  mahoganyAOMap.wrapS = mahoganyAOMap.wrapT = THREE.RepeatWrapping;
+  mahoganyBaseColorMap.repeat.set(10, 5); // Repeat across the larger area
+  mahoganyNormalMap.repeat.set(10, 5);
+  mahoganyAOMap.repeat.set(10, 5);
+
+  const outOfBoundsCourtPartMaterial = new THREE.MeshPhongMaterial({
+    map: mahoganyBaseColorMap,
+    normalMap: mahoganyNormalMap,
+    aoMap: mahoganyAOMap,
+    shininess: 50
+  });
+
   const outOfBoundsCourt = new THREE.Mesh(outOfBoundsCourtPartGeometry, outOfBoundsCourtPartMaterial);
   outOfBoundsCourt.receiveShadow = true;
   scene.add(outOfBoundsCourt);
-
-  //will add white lines to indicate the end of the real court and the out of bounds area 
-  //the 2 shorter lines
-  const outOfBoundsLengthLineGeometry = new THREE.BoxGeometry(0.2, 0.01, 15);
-  const outOfBoundsLengthLineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-  const outOfBoundsLineOne = new THREE.Mesh(outOfBoundsLengthLineGeometry, outOfBoundsLengthLineMaterial);
-  outOfBoundsLineOne.position.set(15, 0.1, 0);
-  const outOfBoundsLineTwo = new THREE.Mesh(outOfBoundsLengthLineGeometry, outOfBoundsLengthLineMaterial);
-  outOfBoundsLineTwo.position.set(-15, 0.1, 0);
-
-  //the 2 longer lines
-  const outOfBoundsWidthLineGeometry = new THREE.BoxGeometry(30, 0.01, 0.2);
-  const outOfBoundsWidthLineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-  const outOfBoundsLineThree = new THREE.Mesh(outOfBoundsWidthLineGeometry, outOfBoundsWidthLineMaterial);
-  outOfBoundsLineThree.position.set(0, 0.1, 7.5);
-  const outOfBoundsLineFour = new THREE.Mesh(outOfBoundsWidthLineGeometry, outOfBoundsWidthLineMaterial);
-  outOfBoundsLineFour.position.set(0, 0.1, -7.5);
-
-  scene.add(outOfBoundsLineOne);
-  scene.add(outOfBoundsLineTwo);
-  scene.add(outOfBoundsLineThree);
-  scene.add(outOfBoundsLineFour);
 
   // Note: All court lines, hoops, and other elements have been removed
   // Students will need to implement these features
@@ -126,21 +140,60 @@ function createCourtLines() {
   scene.add(conLineTwo)
   scene.add(conLineThree)
   scene.add(conLineFour)
+
+  //will add white lines to indicate the end of the real court and the out of bounds area 
+  //the 2 shorter lines
+  const outOfBoundsLengthLineGeometry = new THREE.BoxGeometry(0.2, 0.01, 15);
+  const outOfBoundsLengthLineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const outOfBoundsLineOne = new THREE.Mesh(outOfBoundsLengthLineGeometry, outOfBoundsLengthLineMaterial);
+  outOfBoundsLineOne.position.set(15, 0.1, 0);
+  const outOfBoundsLineTwo = new THREE.Mesh(outOfBoundsLengthLineGeometry, outOfBoundsLengthLineMaterial);
+  outOfBoundsLineTwo.position.set(-15, 0.1, 0);
+
+  //the 2 longer lines
+  const outOfBoundsWidthLineGeometry = new THREE.BoxGeometry(30, 0.01, 0.2);
+  const outOfBoundsWidthLineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const outOfBoundsLineThree = new THREE.Mesh(outOfBoundsWidthLineGeometry, outOfBoundsWidthLineMaterial);
+  outOfBoundsLineThree.position.set(0, 0.1, 7.5);
+  const outOfBoundsLineFour = new THREE.Mesh(outOfBoundsWidthLineGeometry, outOfBoundsWidthLineMaterial);
+  outOfBoundsLineFour.position.set(0, 0.1, -7.5);
+
+  scene.add(outOfBoundsLineOne);
+  scene.add(outOfBoundsLineTwo);
+  scene.add(outOfBoundsLineThree);
+  scene.add(outOfBoundsLineFour);
 }
 
 function createBasketball() {
-  // this will create the actual ball 
-  const BasketballGeometry = new THREE.SphereGeometry(0.5, 32, 16); 
-  const BasketballMaterial = new THREE.MeshBasicMaterial({color: 0xd35400}); 
+  // this will create the actual ball with leather texture
+  const BasketballGeometry = new THREE.SphereGeometry(0.5, 32, 16);
+
+  const textureLoader = new THREE.TextureLoader();
+  
+  // Load leather texture maps
+  const leatherAlbedo = textureLoader.load('src/textures/brown-leather_albedo.png');
+  const leatherNormal = textureLoader.load('src/textures/brown-leather_normal-ogl.png');
+  const leatherAO = textureLoader.load('src/textures/brown-leather_ao.png');
+  
+  const BasketballMaterial = new THREE.MeshPhongMaterial({
+  map: leatherAlbedo,
+  normalMap: leatherNormal,
+  aoMap: leatherAO,
+  color: 0xff6600,
+  emissive: 0xffa431,
+  shininess: 5
+  });
+  
   const Basketball = new THREE.Mesh(BasketballGeometry, BasketballMaterial);
-  Basketball.position.set(0, 2, 0)
-  scene.add(Basketball)
+  Basketball.position.set(0, 2, 0);
+  Basketball.castShadow = true;
+  scene.add(Basketball);
   
   // this will create the lines - important: dont use scene.add() - use basketball.add to make the basketball the parent of the lines
   // this will make it so the lines are in the local coordinates of the basketball instead of the global coordinates
   // and they will move with the ball when it moves 
   // we will use 3 cylinders that surround the ball 
-  const ballRingGeometry = new THREE.CylinderGeometry(0.51, 0.51, 0.02, 32, 1, true);
+  const ballRingGeometry = new THREE.CylinderGeometry(0.502, 0.502, 0.02, 32, 1, true);
   const ballRingMaterial = new THREE.MeshBasicMaterial({color: 0x000000}); 
   const ballRingOne = new THREE.Mesh(ballRingGeometry, ballRingMaterial);
   const ballRingTwo = new THREE.Mesh(ballRingGeometry, ballRingMaterial);
@@ -226,7 +279,7 @@ function createBaskets() {
 
   //this is the board 
   const basketBoardGeometry = new THREE.BoxGeometry(0.1, 3, 4);
-  const basketBoardMaterial = new THREE.MeshPhongMaterial({color: 0xa9a9a9, transparent: true, opacity: 0.40});
+  const basketBoardMaterial = new THREE.MeshPhongMaterial({color: 0xffffff, transparent: true, opacity: 0.40});
 
   const basketBoardOne = new THREE.Mesh(basketBoardGeometry, basketBoardMaterial);
   basketBoardOne.position.set(14, 4.7, 0);
@@ -352,7 +405,7 @@ function createBaskets() {
   // there are metal support beams for the rim with a connector to the board
   //this is the rim to board connector
   const rimConnectorGeometry = new THREE.BoxGeometry(0.1, 0.7, 0.8);
-  const rimConnectorMaterial = new THREE.MeshBasicMaterial( {color: 0xff8f19, shininess: 100} );
+  const rimConnectorMaterial = new THREE.MeshPhongMaterial( {color: 0xff8f19, shininess: 100} );
 
   const rimConnectorOne = new THREE.Mesh(rimConnectorGeometry, rimConnectorMaterial);
   rimConnectorOne.position.set(13.9, 3.8, 0)
@@ -364,7 +417,7 @@ function createBaskets() {
   
   //these are the small metal beams
   const rimSupportGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.8, 32); 
-  const rimSupportMaterial = new THREE.MeshBasicMaterial( {color: 0xff8f19, shininess: 100} ); 
+  const rimSupportMaterial = new THREE.MeshPhongMaterial( {color: 0xff8f19, shininess: 100} ); 
 
   //for the positive x basket
   const rimSupportOne = new THREE.Mesh(rimSupportGeometry, rimSupportMaterial);
