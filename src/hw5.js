@@ -335,12 +335,6 @@ function createBaskets() {
 
   scene.add(smallPerpMarkingthree)
   scene.add(smallPerpMarkingFour)
-
-
-
-
-
-
   
   //the positive x board
   //the parallel to the y axis
@@ -473,7 +467,31 @@ camera.applyMatrix4(cameraTranslate);
 const controls = new OrbitControls(camera, renderer.domElement);
 let isOrbitEnabled = true;
 
-// Instructions display
+// Score display (positioned above controls)
+const scoreElement = document.createElement('div');
+scoreElement.style.position = 'absolute';
+scoreElement.style.bottom = '120px';
+scoreElement.style.left = '20px';
+scoreElement.style.color = 'white';
+scoreElement.style.fontSize = '16px';
+scoreElement.style.fontFamily = 'Arial, sans-serif';
+scoreElement.style.border = '2px solid white';
+scoreElement.style.padding = '15px';
+scoreElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+scoreElement.style.borderRadius = '5px';
+scoreElement.style.width = '200px';                    // Fixed width (narrow)
+scoreElement.style.height = 'auto';                    // Flexible height (grows tall)
+scoreElement.style.boxSizing = 'border-box';
+scoreElement.style.wordWrap = 'break-word';            // Break long words
+scoreElement.style.overflow = 'visible';               // Show all content
+
+scoreElement.innerHTML = `
+  <h3 style="margin: 0 0 10px 0;">Score:</h3>
+  <p style="margin: 0;">Player Score Variable - added later</p>
+`;
+document.body.appendChild(scoreElement);
+
+// Instructions display (same flexible behavior)
 const instructionsElement = document.createElement('div');
 instructionsElement.style.position = 'absolute';
 instructionsElement.style.bottom = '20px';
@@ -482,29 +500,21 @@ instructionsElement.style.color = 'white';
 instructionsElement.style.fontSize = '16px';
 instructionsElement.style.fontFamily = 'Arial, sans-serif';
 instructionsElement.style.textAlign = 'left';
+instructionsElement.style.border = '2px solid white';
+instructionsElement.style.padding = '15px';
+instructionsElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+instructionsElement.style.borderRadius = '5px';
+instructionsElement.style.width = '200px';             // Fixed width (narrow)
+instructionsElement.style.height = 'auto';             // Flexible height (grows tall)
+instructionsElement.style.boxSizing = 'border-box';
+instructionsElement.style.wordWrap = 'break-word';     // Break long words
+instructionsElement.style.overflow = 'visible';        // Show all content
+
 instructionsElement.innerHTML = `
-  <h3>Controls:</h3>
-  <p>O - Toggle orbit camera</p>
+  <h3 style="margin: 0 0 10px 0;">Controls:</h3>
+  <p style="margin: 0;">O - Toggle orbit camera</p>
 `;
 document.body.appendChild(instructionsElement);
-
-
-// Score display
-const scoreElement = document.createElement('div');
-scoreElement.style.position = 'absolute';
-scoreElement.style.bottom = '600px';
-scoreElement.style.left = '550px';
-scoreElement.style.color = 'white';
-scoreElement.style.fontSize = '16px';
-scoreElement.style.fontFamily = 'Arial, sans-serif';
-scoreElement.style.display = 'flex';
-scoreElement.style.gap = '40px';
-
-scoreElement.innerHTML = `
-  <span id="scoreA">Score Player A:   0 points</span>
-  <span id="scoreB">Score Player B:   0 points</span>
-`;
-document.body.appendChild(scoreElement);
 
 
 
