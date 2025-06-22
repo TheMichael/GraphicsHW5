@@ -13,13 +13,40 @@ scene.background = new THREE.Color(0x000000);
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
 directionalLight.position.set(10, 20, 15);
 scene.add(directionalLight);
 
-// Enable shadows
+const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+directionalLight2.position.set(-10, 20, -15);
+scene.add(directionalLight2);
+
+const directionalLight3 = new THREE.DirectionalLight(0xffffff, 0.3);
+directionalLight3.position.set(0, 25, 0);
+scene.add(directionalLight3);
+
 renderer.shadowMap.enabled = true;
 directionalLight.castShadow = true;
+directionalLight2.castShadow = true;
+directionalLight3.castShadow = true;
+
+directionalLight.shadow.camera.top = 15;
+directionalLight.shadow.camera.left = -20;
+directionalLight.shadow.camera.right = 20;
+directionalLight.shadow.camera.bottom = -20;
+directionalLight.shadow.camera.far = 50;
+
+directionalLight2.shadow.camera.top = 15;
+directionalLight2.shadow.camera.left = -20;
+directionalLight2.shadow.camera.right = 20;
+directionalLight2.shadow.camera.bottom = -20;
+directionalLight2.shadow.camera.far = 50;
+
+directionalLight3.shadow.camera.top = 15;
+directionalLight3.shadow.camera.left = -20;
+directionalLight3.shadow.camera.right = 20;
+directionalLight3.shadow.camera.bottom = -20;
+directionalLight3.shadow.camera.far = 50;
 
 function degrees_to_radians(degrees) {
   var pi = Math.PI;
@@ -220,6 +247,9 @@ function createBaskets() {
   const basketBaseTwo = new THREE.Mesh(basketBaseGeometry, basketBaseMaterial);
   basketBaseTwo.position.set(-16.1, 0, 0);
 
+  basketBaseOne.castShadow = true;
+  basketBaseTwo.castShadow = true;
+
   scene.add(basketBaseOne);
   scene.add(basketBaseTwo);
 
@@ -232,6 +262,9 @@ function createBaskets() {
 
   const basketPoleTwo = new THREE.Mesh(basketPoleGeometry, basketPoleMaterial);
   basketPoleTwo.position.set(-16.1, 2.5, 0);
+
+  basketPoleOne.castShadow = true;
+  basketPoleTwo.castShadow = true;
 
   scene.add(basketPoleOne);
   scene.add(basketPoleTwo);
@@ -258,6 +291,11 @@ function createBaskets() {
   basketConnectorThree.rotation.z = Math.PI / 4;
   basketConnectorFour.rotation.z = -Math.PI / 4;
 
+  basketConnectorOne.castShadow = true;
+  basketConnectorTwo.castShadow = true;
+  basketConnectorThree.castShadow = true;
+  basketConnectorFour.castShadow = true;
+
   scene.add(basketConnectorOne);
   scene.add(basketConnectorTwo);
   scene.add(basketConnectorThree);
@@ -273,6 +311,9 @@ function createBaskets() {
   const boardConnectorTwo = new THREE.Mesh(boardConnectorGeometry, boardConnectorMaterial);
   boardConnectorTwo.position.set(-14.2, 4.7, 0);
 
+  boardConnectorOne.castShadow = true;
+  boardConnectorTwo.castShadow = true;
+
   scene.add(boardConnectorOne);
   scene.add(boardConnectorTwo);
   
@@ -285,6 +326,9 @@ function createBaskets() {
   basketBoardOne.position.set(14, 4.7, 0);
   const basketBoardTwo = new THREE.Mesh(basketBoardGeometry, basketBoardMaterial);
   basketBoardTwo.position.set(-14, 4.7, 0);
+
+  basketBoardOne.castShadow = true;
+  basketBoardTwo.castShadow = true;
 
   scene.add(basketBoardOne);
   scene.add(basketBoardTwo);
@@ -393,6 +437,8 @@ function createBaskets() {
   rimOne.rotation.x = Math.PI / 2;
   rimTwo.rotation.x = Math.PI / 2;
 
+  rimOne.castShadow = true;
+  rimTwo.castShadow = true;
   scene.add(rimOne);
   scene.add(rimTwo);
 
@@ -405,6 +451,9 @@ function createBaskets() {
   rimConnectorOne.position.set(13.9, 3.8, 0)
   const rimConnectorTwo = new THREE.Mesh(rimConnectorGeometry, rimConnectorMaterial);
   rimConnectorTwo.position.set(-13.9, 3.8, 0)
+
+  rimConnectorOne.castShadow = true;
+  rimConnectorTwo.castShadow = true;
 
   scene.add(rimConnectorOne)
   scene.add(rimConnectorTwo)
@@ -424,6 +473,9 @@ function createBaskets() {
   rimSupportTwo.rotation.z = Math.PI / 3
   rimSupportTwo.rotation.y = -Math.PI / 8
 
+  rimSupportOne.castShadow = true;
+  rimSupportTwo.castShadow = true;
+
   scene.add(rimSupportOne)
   scene.add(rimSupportTwo)
 
@@ -437,6 +489,9 @@ function createBaskets() {
   rimSupportFour.position.set(-13.6, 3.7, -0.5)
   rimSupportFour.rotation.z = -Math.PI / 3
   rimSupportFour.rotation.y = Math.PI / 8
+
+  rimSupportThree.castShadow = true;
+  rimSupportFour.castShadow = true;
 
   scene.add(rimSupportThree)
   scene.add(rimSupportFour)
@@ -467,7 +522,7 @@ camera.applyMatrix4(cameraTranslate);
 const controls = new OrbitControls(camera, renderer.domElement);
 let isOrbitEnabled = true;
 
-// Score display (positioned above controls)
+// Score display
 const scoreElement = document.createElement('div');
 scoreElement.style.position = 'absolute';
 scoreElement.style.bottom = '120px';
@@ -479,11 +534,11 @@ scoreElement.style.border = '2px solid white';
 scoreElement.style.padding = '15px';
 scoreElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
 scoreElement.style.borderRadius = '5px';
-scoreElement.style.width = '200px';                    // Fixed width (narrow)
-scoreElement.style.height = 'auto';                    // Flexible height (grows tall)
+scoreElement.style.width = '200px';
+scoreElement.style.height = 'auto';
 scoreElement.style.boxSizing = 'border-box';
-scoreElement.style.wordWrap = 'break-word';            // Break long words
-scoreElement.style.overflow = 'visible';               // Show all content
+scoreElement.style.wordWrap = 'break-word';
+scoreElement.style.overflow = 'visible';
 
 scoreElement.innerHTML = `
   <h3 style="margin: 0 0 10px 0;">Score:</h3>
@@ -491,7 +546,7 @@ scoreElement.innerHTML = `
 `;
 document.body.appendChild(scoreElement);
 
-// Instructions display (same flexible behavior)
+// Instructions display
 const instructionsElement = document.createElement('div');
 instructionsElement.style.position = 'absolute';
 instructionsElement.style.bottom = '20px';
@@ -504,11 +559,11 @@ instructionsElement.style.border = '2px solid white';
 instructionsElement.style.padding = '15px';
 instructionsElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
 instructionsElement.style.borderRadius = '5px';
-instructionsElement.style.width = '200px';             // Fixed width (narrow)
-instructionsElement.style.height = 'auto';             // Flexible height (grows tall)
+instructionsElement.style.width = '200px';
+instructionsElement.style.height = 'auto';
 instructionsElement.style.boxSizing = 'border-box';
-instructionsElement.style.wordWrap = 'break-word';     // Break long words
-instructionsElement.style.overflow = 'visible';        // Show all content
+instructionsElement.style.wordWrap = 'break-word';
+instructionsElement.style.overflow = 'visible';
 
 instructionsElement.innerHTML = `
   <h3 style="margin: 0 0 10px 0;">Controls:</h3>
