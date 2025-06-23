@@ -189,6 +189,41 @@ function createCourtLines() {
   scene.add(outOfBoundsLineTwo);
   scene.add(outOfBoundsLineThree);
   scene.add(outOfBoundsLineFour);
+
+  //we will create additional marking for the bonus lol 
+  //free throw line
+  const freeThrowLineGeometry = new THREE.BoxGeometry(0.2, 0.01, 5);
+  const freeThrowLineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+  const freeThrowLineOne = new THREE.Mesh(freeThrowLineGeometry, freeThrowLineMaterial);
+  freeThrowLineOne.position.set(10, 0.1, 0);
+  const freeThrowLineTwo = new THREE.Mesh(freeThrowLineGeometry, freeThrowLineMaterial);
+  freeThrowLineTwo.position.set(-10, 0.1, 0);
+
+  scene.add(freeThrowLineOne);
+  scene.add(freeThrowLineTwo);
+
+  //lines of the rest of the free throw rectangle
+  const extraLineGeometry = new THREE.BoxGeometry(5, 0.01, 0.2);
+  const extraLineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+  //positive x
+  const extraLineOne = new THREE.Mesh(extraLineGeometry, extraLineMaterial);
+  extraLineOne.position.set(12.5, 0.1, 2.5);
+  const extraLineTwo = new THREE.Mesh(extraLineGeometry, extraLineMaterial);
+  extraLineTwo.position.set(12.5, 0.1, -2.5);
+
+  scene.add(extraLineOne);
+  scene.add(extraLineTwo);
+
+  //negative x
+  const extraLineThree = new THREE.Mesh(extraLineGeometry, extraLineMaterial);
+  extraLineThree.position.set(-12.5, 0.1, 2.5);
+  const extraLineFour = new THREE.Mesh(extraLineGeometry, extraLineMaterial);
+  extraLineFour.position.set(-12.5, 0.1, -2.5);
+
+  scene.add(extraLineThree);
+  scene.add(extraLineFour);
 }
 
 function createBasketball() {
@@ -234,280 +269,158 @@ function createBasketball() {
 }
 
 function createBaskets() {
-  //we will create a base, a pole, a board, a ring and a net 
-  // everything is double and mirrored for two side of the court 
+  // this creates the baskets which are all connected to the base
+  // the direction the basket is facing is decided by the x axis (using "direction" variable)
+  createSingleBasket(16.1, 0, 0);
+  createSingleBasket(-16.1, 0, 0);
+}
 
-  //this is the base 
+function createSingleBasket(baseX, baseY, baseZ) {
+  // Create a group to hold all basket components
+  const basketGroup = new THREE.Group();
+  basketGroup.position.set(baseX, baseY, baseZ);
+  
+  //this is the base - FOUNDATION OBJECT (at group origin)
   const basketBaseGeometry = new THREE.BoxGeometry(2, 0.5, 2);
   const basketBaseMaterial = new THREE.MeshPhongMaterial({color: 0x044ca4, shininess: 100});
+  const basketBase = new THREE.Mesh(basketBaseGeometry, basketBaseMaterial);
+  basketBase.position.set(0, 0.25, 0); // Half height above ground
+  basketBase.castShadow = true;
+  basketGroup.add(basketBase);
 
-  const basketBaseOne = new THREE.Mesh(basketBaseGeometry, basketBaseMaterial);
-  basketBaseOne.position.set(16.1, 0, 0);
-
-  const basketBaseTwo = new THREE.Mesh(basketBaseGeometry, basketBaseMaterial);
-  basketBaseTwo.position.set(-16.1, 0, 0);
-
-  basketBaseOne.castShadow = true;
-  basketBaseTwo.castShadow = true;
-
-  scene.add(basketBaseOne);
-  scene.add(basketBaseTwo);
-
-  //this is the support pole
+  //this is the support pole - relative to base
   const basketPoleGeometry = new THREE.CylinderGeometry(0.2, 0.2, 4.7, 32);
   const basketPoleMaterial = new THREE.MeshPhongMaterial({color: 0x044ca4, shininess: 100});
+  const basketPole = new THREE.Mesh(basketPoleGeometry, basketPoleMaterial);
+  basketPole.position.set(0, 2.85, 0);
+  basketPole.castShadow = true;
+  basketGroup.add(basketPole);
 
-  const basketPoleOne = new THREE.Mesh(basketPoleGeometry, basketPoleMaterial);
-  basketPoleOne.position.set(16.1, 2.5, 0);
-
-  const basketPoleTwo = new THREE.Mesh(basketPoleGeometry, basketPoleMaterial);
-  basketPoleTwo.position.set(-16.1, 2.5, 0);
-
-  basketPoleOne.castShadow = true;
-  basketPoleTwo.castShadow = true;
-
-  scene.add(basketPoleOne);
-  scene.add(basketPoleTwo);
-
-  //this is the connector between the pole and the board, and a support 45 degree cylinder
+  // Determine direction multiplier for left/right baskets
+  const direction = baseX > 0 ? 1 : -1; // 1 for right basket, -1 for left basket
+  
+  //this is the horizontal connector between the pole and the board
   const basketConnectorGeometry = new THREE.CylinderGeometry(0.2, 0.2, 2, 32);
   const basketConnectorMaterial = new THREE.MeshPhongMaterial({color: 0x044ca4, shininess: 100});
+  
+  const basketConnectorHorizontal = new THREE.Mesh(basketConnectorGeometry, basketConnectorMaterial);
+  basketConnectorHorizontal.position.set(-0.8 * direction, 5.0, 0);
+  basketConnectorHorizontal.rotation.z = Math.PI / 2 * direction;
+  basketConnectorHorizontal.castShadow = true;
+  basketGroup.add(basketConnectorHorizontal);
 
-  const basketConnectorOne = new THREE.Mesh(basketConnectorGeometry, basketConnectorMaterial);
-  basketConnectorOne.position.set(15.3, 4.7, 0);
-
-  const basketConnectorTwo = new THREE.Mesh(basketConnectorGeometry, basketConnectorMaterial);
-  basketConnectorTwo.position.set(-15.3, 4.7, 0);
-
-  basketConnectorOne.rotation.z = Math.PI / 2;
-  basketConnectorTwo.rotation.z = -Math.PI / 2;
-
-  const basketConnectorThree = new THREE.Mesh(basketConnectorGeometry, basketConnectorMaterial);
-  basketConnectorThree.position.set(15.3, 4, 0);
-
-  const basketConnectorFour = new THREE.Mesh(basketConnectorGeometry, basketConnectorMaterial);
-  basketConnectorFour.position.set(-15.3, 4, 0);
-
-  basketConnectorThree.rotation.z = Math.PI / 4;
-  basketConnectorFour.rotation.z = -Math.PI / 4;
-
-  basketConnectorOne.castShadow = true;
-  basketConnectorTwo.castShadow = true;
-  basketConnectorThree.castShadow = true;
-  basketConnectorFour.castShadow = true;
-
-  scene.add(basketConnectorOne);
-  scene.add(basketConnectorTwo);
-  scene.add(basketConnectorThree);
-  scene.add(basketConnectorFour);
+  //this is the diagonal support connector
+  const basketConnectorDiagonal = new THREE.Mesh(basketConnectorGeometry, basketConnectorMaterial);
+  basketConnectorDiagonal.position.set(-0.8 * direction, 4.3, 0);
+  basketConnectorDiagonal.rotation.z = Math.PI / 4 * direction;
+  basketConnectorDiagonal.castShadow = true;
+  basketGroup.add(basketConnectorDiagonal);
 
   //this is the base connector between the poles and the board
   const boardConnectorGeometry = new THREE.BoxGeometry(0.3, 1, 1);
   const boardConnectorMaterial = new THREE.MeshPhongMaterial({color: 0x044ca4, shininess: 100});
+  const boardConnector = new THREE.Mesh(boardConnectorGeometry, boardConnectorMaterial);
+  boardConnector.position.set(-1.9 * direction, 5.0, 0); 
+  boardConnector.castShadow = true;
+  basketGroup.add(boardConnector);
 
-  const boardConnectorOne = new THREE.Mesh(boardConnectorGeometry, boardConnectorMaterial);
-  boardConnectorOne.position.set(14.2, 4.7, 0);
-
-  const boardConnectorTwo = new THREE.Mesh(boardConnectorGeometry, boardConnectorMaterial);
-  boardConnectorTwo.position.set(-14.2, 4.7, 0);
-
-  boardConnectorOne.castShadow = true;
-  boardConnectorTwo.castShadow = true;
-
-  scene.add(boardConnectorOne);
-  scene.add(boardConnectorTwo);
-  
-
-  //this is the board 
+  //this is the board - relative to base
   const basketBoardGeometry = new THREE.BoxGeometry(0.1, 3, 4);
   const basketBoardMaterial = new THREE.MeshPhongMaterial({color: 0xffffff, transparent: true, opacity: 0.40});
+  const basketBoard = new THREE.Mesh(basketBoardGeometry, basketBoardMaterial);
+  basketBoard.position.set(-2.1 * direction, 5.0, 0);
+  basketBoard.castShadow = true;
+  basketGroup.add(basketBoard);
 
-  const basketBoardOne = new THREE.Mesh(basketBoardGeometry, basketBoardMaterial);
-  basketBoardOne.position.set(14, 4.7, 0);
-  const basketBoardTwo = new THREE.Mesh(basketBoardGeometry, basketBoardMaterial);
-  basketBoardTwo.position.set(-14, 4.7, 0);
-
-  basketBoardOne.castShadow = true;
-  basketBoardTwo.castShadow = true;
-
-  scene.add(basketBoardOne);
-  scene.add(basketBoardTwo);
-
-
-  //this is the marking on the board itself - the white square in the middle of the board
+  // Board markings - small square (relative to board)
+  const smallParallelMarkingGeometry = new THREE.BoxGeometry(0.1, 0.2, 1.1); 
+  const smallParallelMarkingMaterial = new THREE.MeshBasicMaterial({color: 0xffffff}); 
   
-  //the positive x board
-  //the parallel to the y axis
-  const smallParallelMarkingOneGeometry = new THREE.BoxGeometry(0.1, 0.2, 1.1); 
-  const smallParallelMarkingOneMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
-
-  const smallParallelMarkingOne = new THREE.Mesh(smallParallelMarkingOneGeometry, smallParallelMarkingOneMaterial); 
-  smallParallelMarkingOne.position.set(14, 5.2, 0)
-  const smallParallelMarkingTwo = new THREE.Mesh(smallParallelMarkingOneGeometry, smallParallelMarkingOneMaterial); 
-  smallParallelMarkingTwo.position.set(14, 4.2, 0)
-
-  scene.add(smallParallelMarkingOne)
-  scene.add(smallParallelMarkingTwo)
-
-  //the perpendicular to the y axis
-  const smallPerpMarkingOneGeometry = new THREE.BoxGeometry(0.1, 1.1, 0.2); 
-  const smallPerpMarkingOneMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
-
-  const smallPerpMarkingOne = new THREE.Mesh(smallPerpMarkingOneGeometry, smallPerpMarkingOneMaterial); 
-  smallPerpMarkingOne.position.set(14, 4.7, 0.5)
-  const smallPerpMarkingTwo = new THREE.Mesh(smallPerpMarkingOneGeometry, smallPerpMarkingOneMaterial); 
-  smallPerpMarkingTwo.position.set(14, 4.7, -0.5)
-
-  scene.add(smallPerpMarkingOne)
-  scene.add(smallPerpMarkingTwo)
-
-  //the negative x board
-  //the parallel to the y axis
-  const smallParallelMarkingthree = new THREE.Mesh(smallParallelMarkingOneGeometry, smallParallelMarkingOneMaterial); 
-  smallParallelMarkingthree.position.set(-14, 5.2, 0)
-  const smallParallelMarkingfour = new THREE.Mesh(smallParallelMarkingOneGeometry, smallParallelMarkingOneMaterial); 
-  smallParallelMarkingfour.position.set(-14, 4.2, 0)
-
-  scene.add(smallParallelMarkingthree)
-  scene.add(smallParallelMarkingfour)
-
-  //the perpendicular to the y axis
-  const smallPerpMarkingthree = new THREE.Mesh(smallPerpMarkingOneGeometry, smallPerpMarkingOneMaterial); 
-  smallPerpMarkingthree.position.set(-14, 4.7, 0.5)
-  const smallPerpMarkingFour = new THREE.Mesh(smallPerpMarkingOneGeometry, smallPerpMarkingOneMaterial); 
-  smallPerpMarkingFour.position.set(-14, 4.7, -0.5)
-
-  scene.add(smallPerpMarkingthree)
-  scene.add(smallPerpMarkingFour)
+  const smallParallelMarkingTop = new THREE.Mesh(smallParallelMarkingGeometry, smallParallelMarkingMaterial); 
+  smallParallelMarkingTop.position.set(-2.1 * direction, 5.5, 0); 
+  basketGroup.add(smallParallelMarkingTop);
   
-  //the positive x board
-  //the parallel to the y axis
-  const bigParallelMarkingOneGeometry = new THREE.BoxGeometry(0.1, 0.2, 4.1); 
-  const bigParallelMarkingOneMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
+  const smallParallelMarkingBottom = new THREE.Mesh(smallParallelMarkingGeometry, smallParallelMarkingMaterial); 
+  smallParallelMarkingBottom.position.set(-2.1 * direction, 4.5, 0);
+  basketGroup.add(smallParallelMarkingBottom);
 
-  const bigParallelMarkingOne = new THREE.Mesh(bigParallelMarkingOneGeometry, bigParallelMarkingOneMaterial); 
-  bigParallelMarkingOne.position.set(14, 6.2, 0)
-  const bigParallelMarkingTwo = new THREE.Mesh(bigParallelMarkingOneGeometry, bigParallelMarkingOneMaterial); 
-  bigParallelMarkingTwo.position.set(14, 3.2, 0)
+  const smallPerpMarkingGeometry = new THREE.BoxGeometry(0.1, 1.1, 0.2); 
+  const smallPerpMarkingMaterial = new THREE.MeshBasicMaterial({color: 0xffffff}); 
+  
+  const smallPerpMarkingLeft = new THREE.Mesh(smallPerpMarkingGeometry, smallPerpMarkingMaterial); 
+  smallPerpMarkingLeft.position.set(-2.1 * direction, 5.0, 0.5);
+  basketGroup.add(smallPerpMarkingLeft);
+  
+  const smallPerpMarkingRight = new THREE.Mesh(smallPerpMarkingGeometry, smallPerpMarkingMaterial); 
+  smallPerpMarkingRight.position.set(-2.1 * direction, 5.0, -0.5);
+  basketGroup.add(smallPerpMarkingRight);
 
-  scene.add(bigParallelMarkingOne)
-  scene.add(bigParallelMarkingTwo)
+  // Board markings - large square (outer border)
+  const bigParallelMarkingGeometry = new THREE.BoxGeometry(0.1, 0.2, 4.1); 
+  const bigParallelMarkingMaterial = new THREE.MeshBasicMaterial({color: 0xffffff}); 
+  
+  const bigParallelMarkingTop = new THREE.Mesh(bigParallelMarkingGeometry, bigParallelMarkingMaterial); 
+  bigParallelMarkingTop.position.set(-2.1 * direction, 6.5, 0);
+  basketGroup.add(bigParallelMarkingTop);
+  
+  const bigParallelMarkingBottom = new THREE.Mesh(bigParallelMarkingGeometry, bigParallelMarkingMaterial); 
+  bigParallelMarkingBottom.position.set(-2.1 * direction, 3.5, 0);
+  basketGroup.add(bigParallelMarkingBottom);
 
-  //the perpendicular to the y axis
-  const bigPerpMarkingOneGeometry = new THREE.BoxGeometry(0.1, 3.1, 0.2); 
-  const bigPerpMarkingOneMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
+  const bigPerpMarkingGeometry = new THREE.BoxGeometry(0.1, 3.1, 0.2); 
+  const bigPerpMarkingMaterial = new THREE.MeshBasicMaterial({color: 0xffffff}); 
+  
+  const bigPerpMarkingLeft = new THREE.Mesh(bigPerpMarkingGeometry, bigPerpMarkingMaterial); 
+  bigPerpMarkingLeft.position.set(-2.1 * direction, 5.0, 2);
+  basketGroup.add(bigPerpMarkingLeft);
+  
+  const bigPerpMarkingRight = new THREE.Mesh(bigPerpMarkingGeometry, bigPerpMarkingMaterial); 
+  bigPerpMarkingRight.position.set(-2.1 * direction, 5.0, -2);
+  basketGroup.add(bigPerpMarkingRight);
 
-  const bigPerpMarkingOne = new THREE.Mesh(bigPerpMarkingOneGeometry, bigPerpMarkingOneMaterial); 
-  bigPerpMarkingOne.position.set(14, 4.7, 2)
-  const bigPerpMarkingTwo = new THREE.Mesh(bigPerpMarkingOneGeometry, bigPerpMarkingOneMaterial); 
-  bigPerpMarkingTwo.position.set(14, 4.7, -2)
-
-  scene.add(bigPerpMarkingOne)
-  scene.add(bigPerpMarkingTwo)
-
-  //the negative x board
-  //the parallel to the y axis
-  const bigParallelMarkingthree = new THREE.Mesh(bigParallelMarkingOneGeometry, bigParallelMarkingOneMaterial); 
-  bigParallelMarkingthree.position.set(-14, 6.2, 0)
-  const bigParallelMarkingfour = new THREE.Mesh(bigParallelMarkingOneGeometry, bigParallelMarkingOneMaterial); 
-  bigParallelMarkingfour.position.set(-14, 3.2, 0)
-
-  scene.add(bigParallelMarkingthree)
-  scene.add(bigParallelMarkingfour)
-
-  //the perpendicular to the y axis
-  const bigPerpMarkingthree = new THREE.Mesh(bigPerpMarkingOneGeometry, bigPerpMarkingOneMaterial); 
-  bigPerpMarkingthree.position.set(-14, 4.7, 2)
-  const bigPerpMarkingFour = new THREE.Mesh(bigPerpMarkingOneGeometry, bigPerpMarkingOneMaterial); 
-  bigPerpMarkingFour.position.set(-14, 4.7, -2)
-
-  scene.add(bigPerpMarkingthree)
-  scene.add(bigPerpMarkingFour)
-
-
-  //this is the rim
+  //this is the rim - relative to base
   const rimGeometry = new THREE.TorusGeometry(0.7, 0.1, 16, 100); 
   const rimMaterial = new THREE.MeshPhongMaterial({color: 0xff8f19, shininess: 100}); 
+  const rim = new THREE.Mesh(rimGeometry, rimMaterial);
+  rim.position.set(-3.1 * direction, 4.3, 0);
+  rim.rotation.x = Math.PI / 2;
+  rim.castShadow = true;
+  basketGroup.add(rim);
 
-  const rimOne = new THREE.Mesh(rimGeometry, rimMaterial);
-  rimOne.position.set(13, 4, 0);
-  const rimTwo = new THREE.Mesh(rimGeometry, rimMaterial);
-  rimTwo.position.set(-13, 4, 0);
-
-  rimOne.rotation.x = Math.PI / 2;
-  rimTwo.rotation.x = Math.PI / 2;
-
-  rimOne.castShadow = true;
-  rimTwo.castShadow = true;
-  scene.add(rimOne);
-  scene.add(rimTwo);
-
-  // there are metal support beams for the rim with a connector to the board
-  //this is the rim to board connector
+  // rim to board connector - relative to rim
   const rimConnectorGeometry = new THREE.BoxGeometry(0.1, 0.7, 0.8);
-  const rimConnectorMaterial = new THREE.MeshPhongMaterial( {color: 0xff8f19, shininess: 100} );
+  const rimConnectorMaterial = new THREE.MeshPhongMaterial({color: 0xff8f19, shininess: 100});
+  const rimConnector = new THREE.Mesh(rimConnectorGeometry, rimConnectorMaterial);
+  rimConnector.position.set(-2.2 * direction, 4.1, 0);
+  rimConnector.castShadow = true;
+  basketGroup.add(rimConnector);
 
-  const rimConnectorOne = new THREE.Mesh(rimConnectorGeometry, rimConnectorMaterial);
-  rimConnectorOne.position.set(13.9, 3.8, 0)
-  const rimConnectorTwo = new THREE.Mesh(rimConnectorGeometry, rimConnectorMaterial);
-  rimConnectorTwo.position.set(-13.9, 3.8, 0)
-
-  rimConnectorOne.castShadow = true;
-  rimConnectorTwo.castShadow = true;
-
-  scene.add(rimConnectorOne)
-  scene.add(rimConnectorTwo)
-  
-  //these are the small metal beams
+  // rim support beams - relative to rim
   const rimSupportGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.8, 32); 
-  const rimSupportMaterial = new THREE.MeshPhongMaterial( {color: 0xff8f19, shininess: 100} ); 
+  const rimSupportMaterial = new THREE.MeshPhongMaterial({color: 0xff8f19, shininess: 100}); 
 
-  //for the positive x basket
   const rimSupportOne = new THREE.Mesh(rimSupportGeometry, rimSupportMaterial);
-  rimSupportOne.position.set(13.6, 3.7, 0.5)
-  rimSupportOne.rotation.z = Math.PI / 3
-  rimSupportOne.rotation.y = Math.PI / 8
+  rimSupportOne.position.set(-2.5 * direction, 4.0, 0.5);
+  rimSupportOne.rotation.z = Math.PI / 3 * direction;
+  rimSupportOne.rotation.y = Math.PI / 8;
+  rimSupportOne.castShadow = true;
+  basketGroup.add(rimSupportOne);
 
   const rimSupportTwo = new THREE.Mesh(rimSupportGeometry, rimSupportMaterial);
-  rimSupportTwo.position.set(13.6, 3.7, -0.5)
-  rimSupportTwo.rotation.z = Math.PI / 3
-  rimSupportTwo.rotation.y = -Math.PI / 8
-
-  rimSupportOne.castShadow = true;
+  rimSupportTwo.position.set(-2.5 * direction, 4.0, -0.5);
+  rimSupportTwo.rotation.z = Math.PI / 3 * direction;
+  rimSupportTwo.rotation.y = -Math.PI / 8;
   rimSupportTwo.castShadow = true;
+  basketGroup.add(rimSupportTwo);
 
-  scene.add(rimSupportOne)
-  scene.add(rimSupportTwo)
-
-  //for the negative x basket
-  const rimSupportThree = new THREE.Mesh(rimSupportGeometry, rimSupportMaterial);
-  rimSupportThree.position.set(-13.6, 3.7, 0.5)
-  rimSupportThree.rotation.z = -Math.PI / 3
-  rimSupportThree.rotation.y = -Math.PI / 8
-
-  const rimSupportFour = new THREE.Mesh(rimSupportGeometry, rimSupportMaterial);
-  rimSupportFour.position.set(-13.6, 3.7, -0.5)
-  rimSupportFour.rotation.z = -Math.PI / 3
-  rimSupportFour.rotation.y = Math.PI / 8
-
-  rimSupportThree.castShadow = true;
-  rimSupportFour.castShadow = true;
-
-  scene.add(rimSupportThree)
-  scene.add(rimSupportFour)
-
-
-  //this is the net - i'll do a cylinder with unequal edge radii, hollow and wireframe
+  //this is the net - relative to rim
   const netGeometry = new THREE.CylinderGeometry(0.7, 0.5, 1.2, 32, 1, true); 
   const netMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}); 
+  const net = new THREE.Mesh(netGeometry, netMaterial);
+  net.position.set(-3.1 * direction, 3.6, 0);
+  basketGroup.add(net);
 
-  const netOne = new THREE.Mesh( netGeometry, netMaterial );
-  netOne.position.set(rimOne.position.x, 3.3, 0);
-  const netTwo = new THREE.Mesh( netGeometry, netMaterial );
-  netTwo.position.set(rimTwo.position.x, 3.3, 0);
-
-  scene.add(netOne);
-  scene.add(netTwo);
+  scene.add(basketGroup);
 }
 
 // Create all elements
