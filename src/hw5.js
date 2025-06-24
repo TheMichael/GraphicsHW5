@@ -82,7 +82,7 @@ function createBasketballCourt() {
   scene.add(court);
 
   //this is the out of bounds area where the base of the basket will be
-  const outOfBoundsCourtPartGeometry = new THREE.BoxGeometry(36, 0.1, 18);
+  const outOfBoundsCourtPartGeometry = new THREE.BoxGeometry(42, 0.1, 21);
 
   // add different wood texture for the oob 
   const mahoganyBaseColorMap = textureLoader.load('src/textures/mahogfloor_basecolor.png');
@@ -113,6 +113,7 @@ function createBasketballCourt() {
   createCourtLines()
   createBasketball()
   createBaskets()
+  createScoreboards()
 }
 
 function createCourtLines() {
@@ -422,6 +423,182 @@ function createSingleBasket(baseX, baseY, baseZ) {
 
   scene.add(basketGroup);
 }
+
+
+function createScoreboards() {
+  createSingleScoreboard(19, 0, 0);
+  createSingleScoreboard(-19, 0, 0);
+}
+
+function createSingleScoreboard(baseX, baseY, baseZ) {
+  // Create a group to hold all scoreboard components
+  const scoreboardGroup = new THREE.Group();
+  scoreboardGroup.position.set(baseX, baseY, baseZ);
+
+  // rotate them to face the court
+  scoreboardGroup.rotation.y = Math.PI / 2; // 90 degrees for both sides
+  
+  // Determine direction multiplier for left/right scoreboards
+  const direction = baseX > 0 ? 1 : -1; // 1 for right, -1 for left
+  
+  //this is the base
+  const scoreboardBaseGeometry = new THREE.BoxGeometry(3, 0.6, 3);
+  const scoreboardBaseMaterial = new THREE.MeshPhongMaterial({color: 0x333333, shininess: 80});
+  const scoreboardBase = new THREE.Mesh(scoreboardBaseGeometry, scoreboardBaseMaterial);
+  scoreboardBase.position.set(0, 0.3, 0); // Half height above ground
+  scoreboardBase.castShadow = true;
+  scoreboardGroup.add(scoreboardBase);
+
+  //these are the two support poles
+  const poleGeometry = new THREE.CylinderGeometry(0.25, 0.25, 8, 32);
+  const poleMaterial = new THREE.MeshPhongMaterial({color: 0x444444, shininess: 100});
+  
+  // Left pole
+  const poleLeft = new THREE.Mesh(poleGeometry, poleMaterial);
+  poleLeft.position.set(-0.8, 4.3, 0); // Left side, halfway up
+  poleLeft.castShadow = true;
+  scoreboardGroup.add(poleLeft);
+  
+  // Right pole
+  const poleRight = new THREE.Mesh(poleGeometry, poleMaterial);
+  poleRight.position.set(0.8, 4.3, 0); // Right side, halfway up
+  poleRight.castShadow = true;
+  scoreboardGroup.add(poleRight);
+
+  //horizontal support part between poles
+  const horizontalSupportGeometry = new THREE.CylinderGeometry(0.15, 0.15, 1.8, 16);
+  const horizontalSupportMaterial = new THREE.MeshPhongMaterial({color: 0x444444, shininess: 100});
+  const horizontalSupport = new THREE.Mesh(horizontalSupportGeometry, horizontalSupportMaterial);
+  horizontalSupport.position.set(0, 6, 0);
+  horizontalSupport.rotation.z = Math.PI / 2;
+  horizontalSupport.castShadow = true;
+  scoreboardGroup.add(horizontalSupport);
+
+  //connectors from poles to scoreboard
+  const connectorGeometry = new THREE.BoxGeometry(0.3, 0.8, 0.3);
+  const connectorMaterial = new THREE.MeshPhongMaterial({color: 0x555555, shininess: 100});
+  
+  const connectorLeft = new THREE.Mesh(connectorGeometry, connectorMaterial);
+  connectorLeft.position.set(-0.8, 7.8, -0.5 * direction);
+  connectorLeft.castShadow = true;
+  scoreboardGroup.add(connectorLeft);
+  
+  const connectorRight = new THREE.Mesh(connectorGeometry, connectorMaterial);
+  connectorRight.position.set(0.8, 7.8, -0.5 * direction);
+  connectorRight.castShadow = true;
+  scoreboardGroup.add(connectorRight);
+
+  //this is the main scoreboard body
+  const scoreboardBodyGeometry = new THREE.BoxGeometry(4, 2.5, 0.3);
+  const scoreboardBodyMaterial = new THREE.MeshPhongMaterial({color: 0x1a1a1a, shininess: 50});
+  const scoreboardBody = new THREE.Mesh(scoreboardBodyGeometry, scoreboardBodyMaterial);
+  scoreboardBody.position.set(0, 8, -0.8 * direction); 
+  scoreboardBody.castShadow = true;
+  scoreboardGroup.add(scoreboardBody);
+
+  //red team score section
+  const redSectionGeometry = new THREE.BoxGeometry(1.8, 2.2, 0.31);
+  const redSectionMaterial = new THREE.MeshPhongMaterial({color: 0xcc0000, shininess: 80});
+  const redSection = new THREE.Mesh(redSectionGeometry, redSectionMaterial);
+  redSection.position.set(-1, 8, -0.82 * direction); // Left side
+  scoreboardGroup.add(redSection);
+
+  //blue team score section
+  const blueSectionGeometry = new THREE.BoxGeometry(1.8, 2.2, 0.31);
+  const blueSectionMaterial = new THREE.MeshPhongMaterial({color: 0x0066cc, shininess: 80});
+  const blueSection = new THREE.Mesh(blueSectionGeometry, blueSectionMaterial);
+  blueSection.position.set(1, 8, -0.82 * direction); // Right side
+  scoreboardGroup.add(blueSection);
+
+  //center divider
+  const dividerGeometry = new THREE.BoxGeometry(0.1, 2.2, 0.32);
+  const dividerMaterial = new THREE.MeshPhongMaterial({color: 0xffffff, shininess: 100});
+  const divider = new THREE.Mesh(dividerGeometry, dividerMaterial);
+  divider.position.set(0, 8, -0.82 * direction);
+  scoreboardGroup.add(divider);
+
+  //score display areas
+  const scoreDisplayGeometry = new THREE.BoxGeometry(1.4, 1.6, 0.32);
+  const scoreDisplayMaterial = new THREE.MeshPhongMaterial({color: 0x000000, shininess: 10});
+  
+  // Red team score display
+  const redScoreDisplay = new THREE.Mesh(scoreDisplayGeometry, scoreDisplayMaterial);
+  redScoreDisplay.position.set(-1, 8, -0.83 * direction);
+  scoreboardGroup.add(redScoreDisplay);
+  
+  // Blue team score display
+  const blueScoreDisplay = new THREE.Mesh(scoreDisplayGeometry, scoreDisplayMaterial);
+  blueScoreDisplay.position.set(1, 8, -0.83 * direction);
+  scoreboardGroup.add(blueScoreDisplay);
+
+  //team color plates
+  const colorPlateGeometry = new THREE.BoxGeometry(1.6, 0.4, 0.32);
+  const redColorPlateMaterial = new THREE.MeshPhongMaterial({color: 0x880000, shininess: 100});
+  const blueColorPlateMaterial = new THREE.MeshPhongMaterial({color: 0x004488, shininess: 100});
+  
+  // Red team plate
+  const redColorPlate = new THREE.Mesh(colorPlateGeometry, redColorPlateMaterial);
+  redColorPlate.position.set(-1, 9, -0.83 * direction);
+  scoreboardGroup.add(redColorPlate);
+  
+  // Blue team plate
+  const blueColorPlate = new THREE.Mesh(colorPlateGeometry, blueColorPlateMaterial);
+  blueColorPlate.position.set(1, 9, -0.83 * direction);
+  scoreboardGroup.add(blueColorPlate);
+
+  //decorative corner accents
+  const accentGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.33);
+  const accentMaterial = new THREE.MeshPhongMaterial({color: 0xffd700, shininess: 120});
+  
+  // Four corner accents
+  const positions = [
+    [-1.9, 9.15], [1.9, 9.15], // Top corners
+    [-1.9, 6.85], [1.9, 6.85]  // Bottom corners
+  ];
+  
+  positions.forEach(([x, y]) => {
+    const accent = new THREE.Mesh(accentGeometry, accentMaterial);
+    accent.position.set(x, y, -0.84 * direction);
+    scoreboardGroup.add(accent);
+  });
+
+  //LED strip around scoreboard (simulated with thin boxes)
+  const ledStripMaterial = new THREE.MeshPhongMaterial({
+    color: 0x00ffff, 
+    emissive: 0x004444, 
+    shininess: 150
+  });
+  
+  // Top LED strip
+  const topLEDGeometry = new THREE.BoxGeometry(4.2, 0.1, 0.33);
+  const topLED = new THREE.Mesh(topLEDGeometry, ledStripMaterial);
+  topLED.position.set(0, 9.3, -0.84 * direction);
+  scoreboardGroup.add(topLED);
+  
+  // Bottom LED strip
+  const bottomLED = new THREE.Mesh(topLEDGeometry, ledStripMaterial);
+  bottomLED.position.set(0, 6.7, -0.84 * direction);
+  scoreboardGroup.add(bottomLED);
+
+  //mounting brackets (decorative)
+  const bracketGeometry = new THREE.BoxGeometry(0.4, 0.6, 0.4);
+  const bracketMaterial = new THREE.MeshPhongMaterial({color: 0x666666, shininess: 80});
+  
+  const bracketLeft = new THREE.Mesh(bracketGeometry, bracketMaterial);
+  bracketLeft.position.set(-0.8, 7.8, -0.3 * direction);
+  bracketLeft.castShadow = true;
+  scoreboardGroup.add(bracketLeft);
+  
+  const bracketRight = new THREE.Mesh(bracketGeometry, bracketMaterial);
+  bracketRight.position.set(0.8, 7.8, -0.3 * direction);
+  bracketRight.castShadow = true;
+  scoreboardGroup.add(bracketRight);
+
+  // Add the complete scoreboard assembly to the scene
+  scene.add(scoreboardGroup);
+}
+
+
 
 // Create all elements
 createBasketballCourt();

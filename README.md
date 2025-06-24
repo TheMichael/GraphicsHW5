@@ -44,6 +44,7 @@
 - Sources of any external assets used:
     Textures downloaded from https://freepbr.com/, I used the unity version and extracted the relevant files.
     Everything I used is under "textures" folder under src (src/textures)
+    Colors in hex code were hand picked from https://htmlcolorcodes.com/color-picker/
 
 
 - MANDATORY: Screenshots of your implementation showing:
