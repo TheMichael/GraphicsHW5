@@ -415,7 +415,7 @@ function createSingleBasket(baseX, baseY, baseZ) {
   basketGroup.add(rimSupportTwo);
 
   //this is the net - relative to rim
-  const netGeometry = new THREE.CylinderGeometry(0.7, 0.5, 1.2, 32, 1, true); 
+  const netGeometry = new THREE.CylinderGeometry(0.7, 0.5, 1.2, 16, 1, true); 
   const netMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}); 
   const net = new THREE.Mesh(netGeometry, netMaterial);
   net.position.set(-3.1 * direction, 3.6, 0);
@@ -682,5 +682,13 @@ function animate() {
   
   renderer.render(scene, camera);
 }
+
+function handleResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+window.addEventListener('resize', handleResize);
 
 animate();
