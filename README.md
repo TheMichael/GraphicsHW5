@@ -37,6 +37,8 @@
     4. Additional "Out of Bounds" area with textures that resemble the court but not exactly - on purpose
     5. Additional basket details (board markings, many connectors and multi-support structure, detailed net)
     6. Additional lightings and shadows 
+    7. Additional camera (use H to swap)
+    8. Big scoreboards behind the basket boards (not functional yet...) 
 
 - Any known issues or limitations:
     None
