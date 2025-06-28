@@ -2,6 +2,8 @@ import {OrbitControls} from './OrbitControls.js'
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const hoopCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+let useHoopCamera = false;
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -421,6 +423,24 @@ function createSingleBasket(baseX, baseY, baseZ) {
   net.position.set(-3.1 * direction, 3.6, 0);
   basketGroup.add(net);
 
+  if (baseX > 0) {
+  const direction = baseX > 0 ? 1 : -1;
+  
+  // Position camera farther behind the right basket
+  hoopCamera.position.set(
+    baseX + (-5.0 * direction), // Farther behind the rim
+    6.0, // Higher up
+    0
+  );
+  
+  // Look at THIS basket's rim (not the opposite one)
+  const rimX = baseX + (-3.1 * direction);
+  const rimY = 4.3;
+  const rimZ = 0;
+  
+  hoopCamera.lookAt(rimX, rimY, rimZ);
+}
+
   scene.add(basketGroup);
 }
 
@@ -611,11 +631,14 @@ camera.applyMatrix4(cameraTranslate);
 // Orbit controls
 const controls = new OrbitControls(camera, renderer.domElement);
 let isOrbitEnabled = true;
+const hoopControls = new OrbitControls(hoopCamera, renderer.domElement);
+hoopControls.enabled = false; // Start disabled
+hoopControls.target.set(16.1 + (-3.1 * 1), 4.3, 0);
 
 // Score display
 const scoreElement = document.createElement('div');
 scoreElement.style.position = 'absolute';
-scoreElement.style.bottom = '120px';
+scoreElement.style.bottom = '250px';
 scoreElement.style.left = '20px';
 scoreElement.style.color = 'white';
 scoreElement.style.fontSize = '16px';
@@ -658,6 +681,7 @@ instructionsElement.style.overflow = 'visible';
 instructionsElement.innerHTML = `
   <h3 style="margin: 0 0 10px 0;">Controls:</h3>
   <p style="margin: 0;">O - Toggle orbit camera</p>
+  <p style="margin: 0;">H - Toggle hoop camera</p>
 `;
 document.body.appendChild(instructionsElement);
 
@@ -668,6 +692,10 @@ function handleKeyDown(e) {
   if (e.key === "o") {
     isOrbitEnabled = !isOrbitEnabled;
   }
+  // Add this new key handler
+  if (e.key === "h") {
+    useHoopCamera = !useHoopCamera;
+  }
 }
 
 document.addEventListener('keydown', handleKeyDown);
@@ -676,16 +704,31 @@ document.addEventListener('keydown', handleKeyDown);
 function animate() {
   requestAnimationFrame(animate);
   
-  // Update controls
-  controls.enabled = isOrbitEnabled;
-  controls.update();
+  if (useHoopCamera) {
+    // Enable hoop camera controls, disable main camera controls
+    hoopControls.enabled = isOrbitEnabled;
+    controls.enabled = false;
+    hoopControls.update();
+  } else {
+    // Enable main camera controls, disable hoop camera controls
+    controls.enabled = isOrbitEnabled;
+    hoopControls.enabled = false;
+    controls.update();
+  }
   
-  renderer.render(scene, camera);
+  // Choose which camera to render with
+  const activeCamera = useHoopCamera ? hoopCamera : camera;
+  renderer.render(scene, activeCamera);
 }
 
 function handleResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+  
+  // this is for the hoop camera
+  hoopCamera.aspect = window.innerWidth / window.innerHeight;
+  hoopCamera.updateProjectionMatrix();
+  
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 

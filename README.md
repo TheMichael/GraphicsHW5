@@ -48,7 +48,15 @@
 
 
 - MANDATORY: Screenshots of your implementation showing:
-Overall view of the basketball court with hoops
-Close-up view of basketball hoops with nets
-View showing the basketball positioned at center court
-View demonstrating camera controls functionality
+1. Overall view of the basketball court with hoops
+![Overall Court View](MandatoryImages/overall-view.png)
+
+2. Close-up view of basketball hoops with nets
+![CloseUp Hoop With Net](MandatoryImages/close-up-hoop.png)
+
+3. View showing the basketball positioned at center court
+![Basketball at Center Court](MandatoryImages/basketball-at-center.png)
+
+4. View demonstrating camera controls functionalitys
+![camera 1](MandatoryImages/camera1.png)
+![camrea 2](MandatoryImages/camera2.png)
